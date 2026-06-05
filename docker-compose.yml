@@ -1,0 +1,83 @@
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_password_ici}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-twitch_clone}
+      MYSQL_USER: ${MYSQL_USER:-twitch_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-jesuisfort}
+    ports:
+      - "3306:3306"
+    volumes:
+      - twitch_db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root_password_ici}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+
+  srs:
+    image: ossrs/srs:5
+    command: ["./objs/srs", "-c", "/etc/srs/srs.conf"]
+    volumes:
+      - ./srs.conf:/etc/srs/srs.conf:ro
+    ports:
+      - "1935:1935"
+      - "8080:8080"
+      - "1985:1985"
+
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: mysql://${MYSQL_USER:-twitch_user}:${MYSQL_PASSWORD:-jesuisfort}@db:3306/${MYSQL_DATABASE:-twitch_clone}
+      REDIS_URL: redis://redis:6379
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin}
+      SRS_RTMP_URL: rtmp://srs/live
+      SRS_HLS_URL: http://srs:8080/live
+      NEXT_PUBLIC_SRS_HLS_URL: http://srs:8080/live
+      NEXT_PUBLIC_USE_SRS: "true"
+      MINIO_BUCKET: ${MINIO_BUCKET:-twitch-clone}
+      MINIO_REGION: ${MINIO_REGION:-us-east-1}
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+      CLERK_SECRET_KEY: ${CLERK_SECRET_KEY}
+      CLERK_WEBHOOK_SECRET: ${CLERK_WEBHOOK_SECRET}
+      SVIX_WEBHOOK_SECRET: ${SVIX_WEBHOOK_SECRET}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      minio:
+        condition: service_started
+      srs:
+        condition: service_started
+
+volumes:
+  twitch_db_data:
+  redis_data:
+  minio_data:

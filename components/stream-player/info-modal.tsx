@@ -19,7 +19,6 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { updateStream } from "@/actions/stream";
-import { UploadDropzone } from "@/lib/uploadthing";
 
 interface InfoModalProps {
   initialName: string;
@@ -36,6 +35,8 @@ export const InfoModal = ({
 
   const [name, setName] = useState(initialName);
   const [thumbnailUrl, setThumbnailUrl] = useState(initialThumbnailUrl);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const onRemove = () => {
     startTransition(() => {
@@ -64,6 +65,43 @@ export const InfoModal = ({
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
+  };
+
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedFile(e.target.files?.[0] ?? null);
+  };
+
+  const uploadThumbnail = async () => {
+    if (!selectedFile) {
+      toast.error("Please select an image first");
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      const body = new FormData();
+      body.append("file", selectedFile);
+
+      const response = await fetch("/api/minio", {
+        method: "POST",
+        body,
+      });
+
+      if (!response.ok) {
+        throw new Error("Upload failed");
+      }
+
+      const data = await response.json();
+      setThumbnailUrl(data.url);
+      toast.success("Thumbnail uploaded");
+      router.refresh();
+      closeRef?.current?.click();
+    } catch (error) {
+      toast.error("Unable to upload thumbnail");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -117,23 +155,21 @@ export const InfoModal = ({
                 />
               </div>
             ) : (
-              <div className="rounded-xl border outline-dashed outline-muted">
-                <UploadDropzone
-                  endpoint="thumbnailUploader"
-                  appearance={{
-                    label: {
-                      color: "#FFFFFF"
-                    },
-                    allowedContent: {
-                      color: "#FFFFFF"
-                    }
-                  }}
-                  onClientUploadComplete={(res) => {
-                    setThumbnailUrl(res?.[0]?.url);
-                    router.refresh();
-                    closeRef?.current?.click();
-                  }}
+              <div className="rounded-xl border outline-dashed outline-muted p-4 space-y-4">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={onFileChange}
+                  className="block w-full rounded border border-white/10 bg-background px-3 py-2 text-sm text-white"
                 />
+                <Button
+                  type="button"
+                  disabled={!selectedFile || isUploading}
+                  onClick={uploadThumbnail}
+                  className="w-full"
+                >
+                  {isUploading ? "Uploading..." : "Upload thumbnail"}
+                </Button>
               </div>
             )}
           </div>
