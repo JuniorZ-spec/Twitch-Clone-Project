@@ -32,7 +32,7 @@ jobs:
       - name: Validate Prisma schema
         run: npx prisma validate
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL || 'mysql://user:password@localhost:3306/twitch_db' }}
 
   build_and_push:
     runs-on: ubuntu-latest
