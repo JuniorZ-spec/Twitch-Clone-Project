@@ -1,9 +1,13 @@
 import { notFound } from "next/navigation";
+import dynamic from "next/dynamic";
 
 import { getUserByUsername } from "@/lib/user-service";
 import { isFollowingUser } from "@/lib/follow-service";
 import { isBlockedByUser } from "@/lib/block-service";
-import { StreamPlayer } from "@/components/stream-player";
+
+const StreamPlayer = dynamic(() => import("@/components/stream-player").then(mod => ({ default: mod.StreamPlayer })), {
+  ssr: false,
+});
 
 interface UserPageProps {
   params: {
@@ -27,7 +31,7 @@ const UserPage = async ({
     notFound();
   }
 
-  return ( 
+  return (
     <StreamPlayer
       user={user}
       stream={user.stream}
@@ -35,5 +39,5 @@ const UserPage = async ({
     />
   );
 }
- 
+
 export default UserPage;

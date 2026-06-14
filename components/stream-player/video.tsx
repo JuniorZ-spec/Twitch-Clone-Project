@@ -12,12 +12,12 @@ interface VideoProps {
 }
 
 export const Video = ({ hostName, streamKey }: VideoProps) => {
-  const useSrs = process.env.NEXT_PUBLIC_USE_SRS === "true";
-  const hlsUrl = useSrs && streamKey && process.env.NEXT_PUBLIC_SRS_HLS_URL
-    ? `${process.env.NEXT_PUBLIC_SRS_HLS_URL}/${streamKey}.m3u8`
+  // FORCE L'UTILISATION DE TON IP WSL POUR LE NAVIGATEUR
+  const hlsUrl = streamKey
+    ? `http://172.31.56.11:8080/live/${streamKey}.m3u8`
     : undefined;
 
-  if (useSrs && hlsUrl) {
+  if (hlsUrl) {
     return (
       <div className="aspect-video border-b group relative">
         <HlsVideo src={hlsUrl} />
@@ -25,7 +25,6 @@ export const Video = ({ hostName, streamKey }: VideoProps) => {
     );
   }
 
-  // Fallback: show offline placeholder
   return (
     <div className="aspect-video border-b group relative">
       <OfflineVideo username={hostName} />

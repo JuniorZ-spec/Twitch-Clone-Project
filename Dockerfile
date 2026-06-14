@@ -1,26 +1,32 @@
-FROM node:20-alpine
-
-# 1. On installe OpenSSL (indispensable pour Prisma sous Alpine)
+# Stage 1: Build de l'application
+FROM node:20-alpine AS builder
 RUN apk add --no-cache openssl
-
 WORKDIR /app
 
-# 2. On copie les fichiers de configuration des paquets
 COPY package*.json ./
-
-# 3. ON COPIE LE DOSSIER PRISMA ICI (pour que le postinstall de npm install fonctionne)
 COPY prisma ./prisma/
+RUN npm ci
 
-# 4. L'installation se lance et génère le client Prisma sans erreur
-RUN npm install
-
-# 5. On copie le reste de ton code source
 COPY . .
-
-# 6. On build l'application Next.js
+RUN npx prisma generate
 RUN npm run build
 
+# Stage 2: Image finale de production (On vire les outils de dev)
+FROM node:20-alpine AS runner
+RUN apk add --no-cache openssl
+WORKDIR /app
+
+# Sécurité obligatoire : On ne tourne PAS en root
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+# On copie uniquement ce qui est nécessaire pour "next start"
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/prisma ./prisma
+
+USER appuser
 EXPOSE 3000
 
-# 7. Au démarrage du conteneur, on applique les migrations puis on lance l'app
-CMD ["sh", "-c", "npx prisma migrate deploy && npm start"]
+CMD ["npx", "next", "start", "-H", "0.0.0.0", "-p", "3000"]

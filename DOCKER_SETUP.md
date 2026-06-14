@@ -13,19 +13,21 @@
 cp .env.example .env
 ```
 
-Edit `.env` and add your local credentials:
+Edit `.env` and add your credentials:
 
-- Clerk API keys (temporary)
+- Clerk API keys
+- LiveKit credentials
+- UploadThing API keys
 - Svix webhook secrets
-- Redis URL for local cache
-- MinIO credentials and local endpoint
-- SRS RTMP / HLS URLs
 
 ### 2. Build and Start Services
 
 ```bash
-# Start services
+# Development environment
 docker-compose up -d
+
+# Production environment
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 ```
 
 ### 3. Initialize Database
@@ -54,24 +56,19 @@ docker-compose exec app npx prisma db seed
 - **Port**: `6379`
 - **Access**: `redis://redis:6379`
 
-### MinIO Storage
-
-- **API**: `http://localhost:9000`
-- **Console**: `http://localhost:9001`
-- **Access Key**: `minioadmin`
-- **Secret Key**: `minioadmin`
-- **S3-compatible endpoint** for local uploads
-
-### SRS Video Server
-
-- **RTMP publish**: `rtmp://localhost/live`
-- **HLS playback**: `http://localhost:8080/live/{stream}.m3u8`
-- **API / metrics**: `http://localhost:1985`
-
 ### Next.js Application
 
 - **URL**: http://localhost:3000
 - **Port**: `3000`
+
+### PHPMyAdmin (Database Management)
+
+- **URL**: http://localhost:8081
+- **User**: `twitch_user` or `root`
+
+### Redis Commander (Redis Management)
+
+- **URL**: http://localhost:8082
 
 ## 🛠️ Common Commands
 
@@ -141,11 +138,8 @@ The app volumes are mounted, so code changes automatically reload:
 ### Debug Database
 
 ```bash
-# Access MySQL console
-docker-compose exec db mysql -u twitch_user -p twitch_clone
-
-# Check Redis health
-docker-compose exec redis redis-cli ping
+# Access PHPMyAdmin: http://localhost:8081
+# Access Redis Commander: http://localhost:8082
 ```
 
 ## 📝 Environment Variables Reference
@@ -157,20 +151,11 @@ docker-compose exec redis redis-cli ping
 | `MYSQL_PASSWORD`                    | MySQL application password           | Yes      |
 | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk public key                     | Yes      |
 | `CLERK_SECRET_KEY`                  | Clerk secret key                     | Yes      |
-| `REDIS_URL`                         | Redis connection URL                 | No       |
-| `MINIO_ROOT_USER`                   | MinIO root access key                | No       |
-| `MINIO_ROOT_PASSWORD`               | MinIO root secret key                | No       |
-| `MINIO_ENDPOINT`                    | MinIO API endpoint                   | No       |
-| `SRS_RTMP_URL`                      | SRS RTMP publish URL                 | No       |
-| `SRS_HLS_URL`                       | SRS HLS playback URL                 | No       |
-| `SVIX_WEBHOOK_SECRET`               | Svix webhook secret                  | No       |
-| `NODE_ENV`                          | Environment (development/production) | No       |
-| `REDIS_URL`                         | Redis connection URL                 | No       |
-| `MINIO_ROOT_USER`                   | MinIO root access key                | No       |
-| `MINIO_ROOT_PASSWORD`               | MinIO root secret key                | No       |
-| `MINIO_ENDPOINT`                    | MinIO API endpoint                   | No       |
-| `SRS_RTMP_URL`                      | SRS RTMP publish URL                 | No       |
-| `SRS_HLS_URL`                       | SRS HLS playback URL                 | No       |
+| `LIVEKIT_API_KEY`                   | LiveKit API key                      | Yes      |
+| `LIVEKIT_API_SECRET`                | LiveKit API secret                   | Yes      |
+| `LIVEKIT_URL`                       | LiveKit server URL                   | Yes      |
+| `UPLOADTHING_SECRET`                | UploadThing secret                   | Yes      |
+| `UPLOADTHING_APP_ID`                | UploadThing app ID                   | Yes      |
 | `SVIX_WEBHOOK_SECRET`               | Svix webhook secret                  | No       |
 | `NODE_ENV`                          | Environment (development/production) | No       |
 
@@ -225,7 +210,7 @@ docker-compose logs redis
 
 For production:
 
-1. Use the single `docker-compose.yml` file
+1. Use `docker-compose.prod.yml` overlay
 2. Set `NODE_ENV=production`
 3. Use strong passwords in `.env`
 4. Configure proper database backups
@@ -233,7 +218,7 @@ For production:
 6. Enable HTTPS/SSL certificates
 
 ```bash
-docker-compose up -d
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 ```
 
 ## 🧹 Cleanup

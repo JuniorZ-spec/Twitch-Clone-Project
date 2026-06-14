@@ -20,6 +20,7 @@ export const getUserByUsername = async (username: string) => {
           isChatFollowersOnly: true,
           thumbnailUrl: true,
           name: true,
+          streamKey: true,
         },
       },
       _count: {

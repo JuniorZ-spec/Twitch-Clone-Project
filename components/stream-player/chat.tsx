@@ -1,6 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { ChatVariant, useChatSidebar } from "@/store/use-chat-sidebar";
+import { ChatHeader } from "./chat-header";
+import { ChatList } from "./chat-list";
+import { ChatForm } from "./chat-form";
+import { ChatInfo } from "./chat-info";
 
 interface ChatProps {
   hostName: string;
@@ -12,15 +17,47 @@ interface ChatProps {
   isChatFollowersOnly: boolean;
 }
 
-export const Chat = (_props: ChatProps) => {
+export const Chat = ({
+  hostName,
+  hostIdentity,
+  viewerName,
+  isFollowing,
+  isChatEnabled,
+  isChatDelayed,
+  isChatFollowersOnly,
+}: ChatProps) => {
   const { variant } = useChatSidebar((state) => state);
+  const [chatValue, setChatValue] = useState("");
+
+  const handleChatSubmit = () => {
+    // TODO: Envoyer le message via LiveKit ou WebSocket
+    setChatValue("");
+  };
 
   return (
-    <div className="flex flex-col bg-background border-l border-b pt-0 h-[calc(100vh-80px)] p-6">
+    <div className="flex flex-col bg-background border-l border-b pt-0 h-[calc(100vh-80px)]">
       {variant === ChatVariant.CHAT ? (
-        <div className="text-sm text-muted-foreground">Chat is not available in this deployment.</div>
+        <>
+          <ChatHeader />
+          <ChatList
+            messages={[]}
+            isHidden={!isChatEnabled}
+          />
+          <ChatForm
+            onSubmit={handleChatSubmit}
+            value={chatValue}
+            onChange={setChatValue}
+            isHidden={!isChatEnabled}
+            isFollowersOnly={isChatFollowersOnly}
+            isFollowing={isFollowing}
+            isDelayed={isChatDelayed}
+          />
+        </>
       ) : (
-        <div className="text-sm text-muted-foreground">Community view is not available.</div>
+        <ChatInfo
+          isDelayed={isChatDelayed}
+          isFollowersOnly={isChatFollowersOnly}
+        />
       )}
     </div>
   );

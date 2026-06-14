@@ -15,23 +15,28 @@ const CreatorLayout = async ({
   params,
   children,
 }: CreatorLayoutProps) => {
-  const self = await getSelfByUsername(params.username);
+  try {
+    const self = await getSelfByUsername(params.username);
 
-  if (!self) {
+    if (!self) {
+      redirect("/");
+    }
+
+    return (
+      <>
+        <Navbar />
+        <div className="flex h-full pt-20">
+          <Sidebar />
+          <Container>
+            {children}
+          </Container>
+        </div>
+      </>
+    );
+  } catch (err) {
+    // If auth lookup fails, redirect to home instead of crashing the app
     redirect("/");
   }
-
-  return ( 
-    <>
-      <Navbar />
-      <div className="flex h-full pt-20">
-        <Sidebar />
-        <Container>
-          {children}
-        </Container>
-      </div>
-    </>
-  );
 }
- 
+
 export default CreatorLayout;

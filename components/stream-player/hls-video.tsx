@@ -14,7 +14,8 @@ export const HlsVideo = ({ src }: HlsVideoProps) => {
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const wrapperRef = useRef<HTMLDivElement>(null);
     const [isFullscreen, setIsFullscreen] = useState(false);
-    const [volume, setVolume] = useState(50);
+    // 1. On force le volume initial à 0 (Muted) pour contourner le blocage de sécurité des navigateurs
+    const [volume, setVolume] = useState(0);
 
     useEffect(() => {
         const video = videoRef.current;
@@ -24,10 +25,20 @@ export const HlsVideo = ({ src }: HlsVideoProps) => {
 
         if (video.canPlayType("application/vnd.apple.mpegurl")) {
             video.src = src;
+            // 2. On force la lecture sur Safari/iOS
+            video.play().catch((e) => console.log("Autoplay blocked:", e));
         } else if (Hls.isSupported()) {
-            hls = new Hls();
+            hls = new Hls({
+                maxLoadingDelay: 4,
+                lowLatencyMode: true,
+            });
             hls.loadSource(src);
             hls.attachMedia(video);
+
+            // 3. ON FORCE LE LANCEMENT AUTOMATIQUE DÈS QUE LE FLUX EST PRÊT
+            hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                video.play().catch((e) => console.log("Playback started after user interaction", e));
+            });
         }
 
         return () => {
@@ -60,14 +71,15 @@ export const HlsVideo = ({ src }: HlsVideoProps) => {
     }, []);
 
     return (
-        <div ref={wrapperRef} className="relative h-full flex">
+        <div ref={wrapperRef} className="relative h-full flex w-full bg-black">
             <video
                 ref={videoRef}
-                className="h-full w-full object-cover"
-                controls
+                className="h-full w-full object-contain"
                 playsInline
+                autoPlay
+                muted // 4. Obligatoire pour que le navigateur accepte de charger la vidéo sans action utilisateur !
             />
-            <div className="absolute inset-x-0 bottom-0 flex h-14 items-center justify-between bg-gradient-to-r from-neutral-950/90 px-4 text-white">
+            <div className="absolute inset-x-0 bottom-0 flex h-14 items-center justify-between bg-gradient-to-t from-neutral-950/90 px-4 text-white opacity-0 hover:opacity-100 transition-opacity duration-300">
                 <VolumeControl
                     onChange={(value) => setVolume(value)}
                     value={volume}
