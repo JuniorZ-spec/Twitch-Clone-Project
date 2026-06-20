@@ -1,0 +1,74 @@
+﻿apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: srs-pvc
+  namespace: twitch-prod
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: srs
+  namespace: twitch-prod
+spec:
+  serviceName: srs
+  replicas: 1
+  selector:
+    matchLabels:
+      app: srs
+  template:
+    metadata:
+      labels:
+        app: srs
+    spec:
+      containers:
+        - name: srs
+          image: ossrs/srs:5
+          command: ["./objs/srs", "-c", "/etc/srs/srs.conf"]
+          ports:
+            - containerPort: 1935
+            - containerPort: 8080
+            - containerPort: 1985
+          volumeMounts:
+            - name: srs-config
+              mountPath: /etc/srs
+            - name: srs-storage
+              mountPath: /tmp/hls
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      volumes:
+        - name: srs-config
+          configMap:
+            name: srs-config
+        - name: srs-storage
+          persistentVolumeClaim:
+            claimName: srs-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: srs
+  namespace: twitch-prod
+spec:
+  selector:
+    app: srs
+  ports:
+    - name: rtmp
+      port: 1935
+      targetPort: 1935
+    - name: http
+      port: 8080
+      targetPort: 8080
+    - name: api
+      port: 1985
+      targetPort: 1985
