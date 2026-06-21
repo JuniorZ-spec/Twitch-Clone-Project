@@ -12,9 +12,8 @@ interface VideoProps {
 }
 
 export const Video = ({ hostName, streamKey }: VideoProps) => {
-  // FORCE L'UTILISATION DE TON IP WSL POUR LE NAVIGATEUR
   const hlsUrl = streamKey
-    ? `http://172.31.56.11:8080/live/${streamKey}.m3u8`
+    ? `${process.env.NEXT_PUBLIC_SRS_HLS_URL}/${streamKey}.m3u8`
     : undefined;
 
   if (hlsUrl) {
