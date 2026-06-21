@@ -1,5 +1,5 @@
 # Stage 1: Build de l'application
-FROM node:20-alpine AS builder
+FROM node:18-alpine AS builder
 RUN apk add --no-cache openssl
 WORKDIR /app
 
@@ -12,7 +12,7 @@ RUN npx prisma generate
 RUN npm run build
 
 # Stage 2: Image finale de production (On vire les outils de dev)
-FROM node:20-alpine AS runner
+FROM node:18-alpine AS runner
 RUN apk add --no-cache openssl
 WORKDIR /app
 
