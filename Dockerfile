@@ -5,6 +5,10 @@ COPY package*.json ./
 COPY prisma ./prisma/
 RUN npm ci
 COPY . .
+
+ARG NEXT_PUBLIC_SRS_HLS_URL
+ENV NEXT_PUBLIC_SRS_HLS_URL=$NEXT_PUBLIC_SRS_HLS_URL
+
 RUN npx prisma generate
 RUN npm run build
 

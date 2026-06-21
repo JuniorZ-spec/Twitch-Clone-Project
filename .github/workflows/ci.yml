@@ -65,6 +65,8 @@ jobs:
           context: .
           file: Dockerfile
           push: true
+          build-args: |
+            NEXT_PUBLIC_SRS_HLS_URL=http://102.37.103.234:8080/live
           tags: |
             ghcr.io/${{ steps.owner.outputs.name }}/video-twitch:latest
             ghcr.io/${{ steps.owner.outputs.name }}/video-twitch:${{ github.sha }}
