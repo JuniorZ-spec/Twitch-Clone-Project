@@ -55,7 +55,13 @@ export const StreamPlayer = ({ user, stream, isFollowing }: StreamPlayerProps) =
           name={stream.name}
         />
         <InfoCard hostIdentity={user.id} viewerIdentity="" name={stream.name} thumbnailUrl={stream.thumbnailUrl} />
-        <AboutCard hostName={user.username} hostIdentity={user.id} viewerIdentity="" bio={user.bio} followedByCount={user._count.followedBy} />
+        <AboutCard
+          hostName={user.username}
+          hostIdentity={user.id}
+          viewerIdentity=""
+          bio={user.bio || "🎮 Streaming, gaming, and good vibes. Come hang out!"}
+          followedByCount={user._count.followedBy}
+        />
       </div>
 
       {/* Colonne de Droite : Le Vrai Chat LiveKit connecté */}

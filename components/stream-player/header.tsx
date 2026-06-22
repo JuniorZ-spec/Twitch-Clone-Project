@@ -16,8 +16,8 @@ interface HeaderProps {
 }
 
 export const Header = ({ imageUrl, hostName, hostIdentity, viewerIdentity, isFollowing, name }: HeaderProps) => {
-  const isLive = false;
-  let participantCount = 0;
+  const isLive = true;
+  let participantCount = 247;
   const hostAsViewer = `host-${hostIdentity}`;
   const isHost = viewerIdentity === hostAsViewer;
 

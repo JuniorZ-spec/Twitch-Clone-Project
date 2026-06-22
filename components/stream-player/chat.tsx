@@ -40,7 +40,23 @@ export const Chat = ({
         <>
           <ChatHeader />
           <ChatList
-            messages={[]}
+            messages={[
+              {
+                timestamp: new Date(Date.now() - 120000).toISOString(),
+                from: { name: "Luna" },
+                message: "The stream looks incredible tonight!"
+              },
+              {
+                timestamp: new Date(Date.now() - 90000).toISOString(),
+                from: { name: "Mika" },
+                message: "That last play was insane 😄"
+              },
+              {
+                timestamp: new Date(Date.now() - 30000).toISOString(),
+                from: { name: "Rin" },
+                message: "Ready for another round!"
+              }
+            ]}
             isHidden={!isChatEnabled}
           />
           <ChatForm

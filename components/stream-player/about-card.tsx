@@ -26,9 +26,9 @@ export const AboutCard = ({
 
   return (
     <div className="px-4">
-      <div className="group rounded-xl bg-background p-6 lg:p-10 flex flex-col gap-y-3">
+      <div className="group rounded-xl bg-background p-4 lg:p-6 flex flex-col gap-y-2">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-x-2 font-semibold text-lg lg:text-2xl">
+          <div className="flex items-center gap-x-2 font-semibold text-base lg:text-xl">
             About {hostName}
             <VerifiedMark />
           </div>
@@ -36,13 +36,13 @@ export const AboutCard = ({
             <BioModal initialValue={bio} />
           )}
         </div>
-        <div className="text-sm text-muted-foreground">
+        <div className="text-xs text-muted-foreground">
           <span className="font-semibold text-primary">
             {followedByCount}
           </span> {followedByLabel}
         </div>
-        <p className="text-sm">
-          {bio || "This user prefers to keep an air of mystery about them."}
+        <p className="text-xs leading-relaxed">
+          {bio || "Streaming, gaming, and good vibes."}
         </p>
       </div>
     </div>
