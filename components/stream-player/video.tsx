@@ -18,14 +18,14 @@ export const Video = ({ hostName, streamKey }: VideoProps) => {
 
   if (hlsUrl) {
     return (
-      <div className="aspect-[16/10] border-b group relative">
+      <div className="aspect-[16/7] border-b group relative">
         <HlsVideo src={hlsUrl} />
       </div>
     );
   }
 
   return (
-    <div className="aspect-[16/10] border-b group relative">
+    <div className="aspect-[16/7] border-b group relative">
       <OfflineVideo username={hostName} />
     </div>
   );
