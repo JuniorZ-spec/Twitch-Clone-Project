@@ -1,6 +1,16 @@
+<img width="1672" height="941" alt="ChatGPT Image 24 juin 2026, 16_26_18" src="https://github.com/user-attachments/assets/c2f82f2d-6a4e-4aa1-baf1-498e992db31a" />
+
+
+
+
+
+
+
+
+
 # Twitch Clone
 
-# Twitch Clone — Résumé pour recruteurs
+
 
 Twitch Clone est un prototype de plateforme de streaming en direct développé avec Next.js et TypeScript. Il illustre une architecture complète (frontend, backend, stockage d'objets, base de données, cache et streaming RTMP/HLS) et des intégrations courantes (authentification, uploads, webhooks).
 
@@ -78,11 +88,15 @@ Documentation additionnelle
 - Docker: `DOCKER_SETUP.md`
 - Infra: `Terraform/` et `k8s/`
 
-Contribuer
 
-- Fork → branche → PR. Merci d'ajouter des tests pour les nouvelles fonctionnalités.
 
-Licence
+<img width="946" height="473" alt="Capture d’écran 2026-06-22 133758" src="https://github.com/user-attachments/assets/fb93c2de-863a-4520-92b1-14124b11251a" />
+
+
+<img width="960" height="479" alt="Capture d’écran 2026-06-24 102335" src="https://github.com/user-attachments/assets/0bf80e33-4aad-4567-91da-dd489a107677" />
+<img width="960" height="480" alt="Capture d’écran 2026-06-24 113323" src="https://github.com/user-attachments/assets/899cce4b-28cc-4e38-a4fe-cc986a1c1c61" />
+
+
 
 - MIT
 
