@@ -5,6 +5,12 @@
 <img width="1672" height="941" alt="ChatGPT Image 24 juin 2026, 16_26_18" src="https://github.com/user-attachments/assets/381e2b4c-831e-418c-ac93-9a15a4d2897a" />
 
 
+<img width="960" height="479" alt="Capture d’écran 2026-06-24 102335" src="https://github.com/user-attachments/assets/5a5c01fc-e482-49d4-9f6f-a5cc350b98d8" />
+<img width="960" height="540" alt="Capture d’écran 2026-06-24 131758" src="https://github.com/user-attachments/assets/603033d8-5a23-4ac8-ae7d-f04db759116c" />
+<img width="946" height="473" alt="Capture d’écran 2026-06-22 133758" src="https://github.com/user-attachments/assets/22abfcf8-aabb-4b73-8efa-496a5fde4cef" />
+
+
+
 
 
 
