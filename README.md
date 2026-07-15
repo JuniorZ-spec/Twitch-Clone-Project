@@ -1,5 +1,20 @@
 # 📺 Twitch Clone - Plateforme de Streaming en Direct
 
+
+
+<img width="1672" height="941" alt="ChatGPT Image 24 juin 2026, 16_26_18" src="https://github.com/user-attachments/assets/381e2b4c-831e-418c-ac93-9a15a4d2897a" />
+
+
+
+
+
+
+
+
+
+
+
+
 <div align="center">
 
 [![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat-square&logo=next.js)](https://nextjs.org/)
